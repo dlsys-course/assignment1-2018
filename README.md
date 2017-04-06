@@ -33,7 +33,7 @@ y = x1 * x2 + x1
 ```
 Now, the computation graph looks like this,
 
-![1st graph](https://github.com/tqchen/dl-system/blob/master/autodiff/img/hwk1_graph1.png)
+![1st graph](https://github.com/dlsys-course/assignment1/blob/master/img/hwk1_graph1.png)
 
 Here, each node is associated with an operator object (we only need a singleton instance for each operator since it is used in an immutable way).
 - Node x1 and x2 are associated with Placeholder Op.
@@ -56,8 +56,8 @@ According to the reverse-mode autodiff algorithm described in the lecture, we cr
 
 We do this in a reverse topological order, e.g., y, (x1+x2), x1, x2, as shown in the figures below
 
-![2nd graph](https://github.com/tqchen/dl-system/blob/master/autodiff/img/hwk1_graph2.png)
-![3rd graph](https://github.com/tqchen/dl-system/blob/master/autodiff/img/hwk1_graph3.png)
+![2nd graph](https://github.com/dlsys-course/assignment1/blob/master/img/hwk1_graph2.png)
+![3rd graph](https://github.com/dlsys-course/assignment1/blob/master/img/hwk1_graph3.png)
 
 
 Once we construct the gradients node, and have references to them, we can evaluate the gradients using Executor as before,
