@@ -340,7 +340,6 @@ def topo_sort_dfs(node, visited, topo_order):
 
 def sum_node_list(node_list):
     """Custom sum function in order to avoid create redundant nodes in Python sum implementation."""
-    result = node_list[0]
-    for i in range(1, len(node_list)):
-        result = result + node_list[i]
-    return result
+    from operator import add
+    from functools import reduce
+    return reduce(add, node_list)
