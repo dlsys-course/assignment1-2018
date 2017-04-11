@@ -73,7 +73,7 @@ class Op(object):
         -------
         An output value of the node.
         """
-        assert False, "Implemented in subclass"
+        raise NotImplementedError
 
     def gradient(self, node, output_grad):
         """Given value of output gradient, compute gradient contributions to each input node.
@@ -87,7 +87,7 @@ class Op(object):
         -------
         A list of gradient contributions to each input node respectively.
         """
-        assert False, "Implemented in subclass"
+        raise NotImplementedError
 
 class AddOp(Op):
     """Op to element-wise add two nodes."""
