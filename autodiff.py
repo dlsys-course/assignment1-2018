@@ -40,6 +40,8 @@ class Node(object):
         """Allow print to display node name.""" 
         return self.name
 
+    __repr__ = __str__
+
 def Variable(name):
     """User defined variables in an expression.  
         e.g. x = Variable(name = "x")
