@@ -105,8 +105,8 @@ Once your code can clear all tests, your autodiff module is almost ready to trai
 
 ## Submitting your work
 
-Please submit your autodiff.tar.gz to Catalyst dropbox under [Assignment 1](https://catalyst.uw.edu/collectit/dropbox/arvindk/40126).
+Please submit your autodiff.tar.gz to Canvas dropbox under [Assignment 1](https://canvas.uw.edu/courses/1199471/assignments/4214861).
 ```bash
 # compress
-tar czvf autodiff.tar.gz autodiff/
+tar czvf assignment1.tar.gz assignment1/
 ```
