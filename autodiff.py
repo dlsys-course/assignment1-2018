@@ -8,7 +8,7 @@ class Node(object):
             Instance variables
             ------------------
             self.inputs: the list of input nodes.
-            self.op: the associated op object, 
+            self.op: the associated op object,
                 e.g. add_op object if this node is created by adding two other nodes.
             self.const_attr: the add or multiply constant,
                 e.g. self.const_attr=5 if this node is created by x+5.
@@ -31,6 +31,11 @@ class Node(object):
 
     def __mul__(self, other):
         """TODO: Your code here"""
+        if isinstance(other, Node):
+            new_node = mul_op(self, other)
+        else:
+            new_node = mul_byconst_op(self, other)
+        return new_node
 
     # Allow left-hand-side add and multiply.
     __radd__ = __add__
@@ -124,7 +129,7 @@ class AddByConstOp(Op):
 
     def gradient(self, node, output_grad):
         """Given gradient of add node, return gradient contribution to input."""
-        return [output_grad]
+        return output_grad[0]
 
 class MulOp(Op):
     """Op to element-wise multiply two nodes."""
@@ -154,10 +159,15 @@ class MulByConstOp(Op):
     def compute(self, node, input_vals):
         """Given values of input node, return result of element-wise multiplication."""
         """TODO: Your code here"""
+        assert len(input_vals) == 1
+        return input_vals[0] * node.const_attr
 
     def gradient(self, node, output_grad):
         """Given gradient of multiplication node, return gradient contribution to input."""
         """TODO: Your code here"""
+        
+        output_grad = np.ones_like(output_grad[0]) * node.const_attr
+        return output_grad
 
 class MatMulOp(Op):
     """Op to matrix multiply two nodes."""
@@ -276,6 +286,30 @@ class Executor:
         # Traverse graph in topological sort order and compute values for all nodes.
         topo_order = find_topo_sort(self.eval_node_list)
         """TODO: Your code here"""
+        mid = int(len(topo_order) / 2)
+        topo_len = int(len(topo_order))
+        # Forward
+        for i in range(mid):
+            node = topo_order[i]
+            if isinstance(node.op, PlaceholderOp):
+                continue
+            
+            inputs = list(map(lambda x: node_to_val_map[x], node.inputs))
+            node_to_val_map[node] = node.op.compute(node, inputs)
+        
+        # Backword
+        #last_inputs = [node_to_val_map[inp] for inp  in topo_order[mid].inputs]
+        #last_grads = [np.ones_like(inp) for inp in last_inputs]
+        last_grads = np.ones_like(topo_order[mid].inputs[0])
+        for i in range(mid + 1, topo_len):
+            node = topo_order[i]
+            if isinstance(node.op, PlaceholderOp):
+                node_to_val_map[node] = last_grads
+                break
+            
+            # inputs = list(map(lambda x: node_to_val_map[x], node.inputs))
+            last_grads = node.op.gradient(node, last_grads)
+            node_to_val_map[node] = last_grads
 
         # Collect node values.
         node_val_results = [node_to_val_map[node] for node in self.eval_node_list]
@@ -307,6 +341,21 @@ def gradients(output_node, node_list):
     reverse_topo_order = reversed(find_topo_sort([output_node]))
 
     """TODO: Your code here"""
+    last_node = None
+    for node in reverse_topo_order:
+        gradient_node = Node()
+        gradient_node.name = node.name + '_grad'
+        if isinstance(node.op, PlaceholderOp) and last_node is not None:
+            gradient_node.inputs = [last_node]
+        elif isinstance(node.op, PlaceholderOp):
+            gradient_node.inputs = [node]
+        else:
+            gradient_node.inputs = node.inputs
+        gradient_node.const_attr = node.const_attr
+        gradient_node.op = node.op
+
+        node_to_output_grad[node] = gradient_node
+        last_node = gradient_node
 
     # Collect results for gradients requested.
     grad_node_list = [node_to_output_grad[node] for node in node_list]
