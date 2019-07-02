@@ -191,6 +191,13 @@ def test_matmul_two_vars():
     assert np.array_equal(grad_x3_val, expected_grad_x3_val)
 
 
-#test_identity()
+test_identity()
 test_add_by_const()
 test_mul_by_const()
+test_add_two_vars()
+test_mul_two_vars()
+test_add_mul_mix_1()
+test_add_mul_mix_2()
+test_add_mul_mix_3()
+test_grad_of_grad()
+test_matmul_two_vars()
